@@ -26,7 +26,7 @@ public class CustomerController {
 		List<AddressInfo> addressInfo= new ArrayList<AddressInfo>();
 		Customer c = customerRepository.findAll()
 						.stream()
-						.filter(x -> x.getLastName().equals(lastName))
+						.filter(x -> x.getLastName().equalsIgnoreCase(lastName))
 						.findAny()
 						.orElse(null);
 		if(null != c && c.getAddressInfo().size() > 0){
