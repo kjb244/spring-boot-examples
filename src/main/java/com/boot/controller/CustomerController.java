@@ -24,9 +24,8 @@ public class CustomerController {
 	@RequestMapping(value="getAddresses/{lastName}", method=RequestMethod.GET)
 	public List<AddressInfo> getAllAddresses(@PathVariable String lastName){
 		List<AddressInfo> addressInfo= new ArrayList<AddressInfo>();
-		Customer c = customerRepository.findAll()
+		Customer c = customerRepository.findByLastName(lastName)
 						.stream()
-						.filter(x -> x.getLastName().equalsIgnoreCase(lastName))
 						.findAny()
 						.orElse(null);
 		if(null != c && c.getAddressInfo().size() > 0){
@@ -35,6 +34,12 @@ public class CustomerController {
 		}
 		return addressInfo;
 		
+	}
+
+
+	@RequestMapping(value="getAddressesLineNameMatches/{addressLineOne}", method=RequestMethod.GET)
+	public List<String> getAddressLineNameMatches(@PathVariable String addressLineOne){
+		return customerRepository.findNamesWhereAddressLineOneMatches(addressLineOne);
 	}
 
 }
