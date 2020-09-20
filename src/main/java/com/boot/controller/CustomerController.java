@@ -3,11 +3,10 @@ package com.boot.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.boot.repository.AddressRepository;
+import com.boot.utils.Utilities;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.boot.model.AddressInfo;
 import com.boot.model.Customer;
@@ -19,6 +18,9 @@ public class CustomerController {
 	
 	@Autowired
 	CustomerRepository customerRepository;
+
+	@Autowired
+	AddressRepository addressRepository;
 	
 	
 	@RequestMapping(value="getAddresses/{lastName}", method=RequestMethod.GET)
@@ -40,6 +42,22 @@ public class CustomerController {
 	@RequestMapping(value="getAddressesLineNameMatches/{addressLineOne}", method=RequestMethod.GET)
 	public List<String> getAddressLineNameMatches(@PathVariable String addressLineOne){
 		return customerRepository.findNamesWhereAddressLineOneMatches(addressLineOne);
+	}
+
+	@RequestMapping(value="updateAddressLine1/{id}", method=RequestMethod.PUT)
+	public AddressInfo updateAddressLine1(@PathVariable int id, @RequestBody AddressInfo addressInfo){
+		String addressLine1 = addressInfo.getAddressLine1();
+		addressRepository.updateAddressLineOne(addressLine1, id);
+
+		return addressRepository.findById(id).get();
+	}
+
+	@RequestMapping(value="updateAddress/{id}", method=RequestMethod.PUT)
+	public AddressInfo updateAddress(@PathVariable int id, @RequestBody AddressInfo addressInfo){
+		AddressInfo existingAddress = addressRepository.findById(id).get();
+		Utilities.merge(existingAddress, addressInfo, "id");
+
+		return addressRepository.saveAndFlush(existingAddress);
 	}
 
 }
